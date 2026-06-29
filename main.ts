@@ -1,12 +1,5 @@
 input.onPinPressed(TouchPin.P0, function () {
     sensor = "White"
-    basic.showLeds(`
-        # . . . #
-        . # . # .
-        . . # . .
-        . # . # .
-        # . . . #
-        `)
 })
 input.onButtonPressed(Button.A, function () {
     sensor = "sound"
@@ -53,6 +46,8 @@ input.onLogoEvent(TouchButtonEvent.Touched, function () {
 })
 let sensor = ""
 let strip = neopixel.create(DigitalPin.P2, 30, NeoPixelMode.RGB)
+let Degrees = input.compassHeading()
+input.calibrateCompass()
 basic.showLeds(`
     # . . . #
     . # . # .
@@ -70,7 +65,19 @@ basic.forever(function () {
     } else if (sensor == "temp") {
         strip.showBarGraph(input.temperature(), 40)
     } else if (sensor == "White") {
-        strip.showColor(neopixel.colors(NeoPixelColors.White))
+        while (sensor == "White") {
+            if (Degrees < 45) {
+                basic.showString("N")
+            } else if (Degrees < 135) {
+                basic.showString("E")
+            } else if (Degrees < 225) {
+                basic.showString("S")
+            } else if (Degrees < 315) {
+                basic.showString("W")
+            } else {
+                basic.showString("N")
+            }
+        }
     } else if (sensor == "Red") {
         strip.showRainbow(1, 360)
         while (sensor == "Red") {
