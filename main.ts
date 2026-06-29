@@ -1,5 +1,12 @@
 input.onPinPressed(TouchPin.P0, function () {
-    strip.setBrightness(input.lightLevel() / 15)
+    sensor = "White"
+    basic.showLeds(`
+        # . . . #
+        . # . # .
+        . . # . .
+        . # . # .
+        # . . . #
+        `)
 })
 input.onButtonPressed(Button.A, function () {
     sensor = "sound"
@@ -31,6 +38,9 @@ input.onButtonPressed(Button.B, function () {
         # # # # #
         `)
 })
+input.onPinPressed(TouchPin.P1, function () {
+    sensor = "Red"
+})
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
     sensor = "Magnets"
     basic.showLeds(`
@@ -41,11 +51,15 @@ input.onLogoEvent(TouchButtonEvent.Touched, function () {
         # . . . #
         `)
 })
-let strip: neopixel.Strip = null
 let sensor = ""
-sensor = "sound"
-basic.showString("s")
-strip = neopixel.create(DigitalPin.P2, 30, NeoPixelMode.RGB)
+let strip = neopixel.create(DigitalPin.P2, 30, NeoPixelMode.RGB)
+basic.showLeds(`
+    # . . . #
+    . # . # .
+    . . # . .
+    . # . # .
+    # . . . #
+    `)
 basic.forever(function () {
     if (sensor == "sound") {
         strip.showBarGraph(input.soundLevel(), 255)
@@ -53,8 +67,18 @@ basic.forever(function () {
         strip.showBarGraph(input.lightLevel(), 255)
     } else if (sensor == "Magnets") {
         strip.showBarGraph(input.magneticForce(Dimension.X), 255)
-    } else {
+    } else if (sensor == "temp") {
         strip.showBarGraph(input.temperature(), 40)
+    } else if (sensor == "White") {
+        strip.showColor(neopixel.colors(NeoPixelColors.White))
+    } else if (sensor == "Red") {
+        strip.showRainbow(1, 360)
+        while (sensor == "Red") {
+            basic.showString("You Win")
+            basic.pause(2000)
+        }
+    } else {
+        strip.showColor(neopixel.colors(NeoPixelColors.Black))
     }
     strip.setBrightness(input.lightLevel() / 10 + 3)
 })
